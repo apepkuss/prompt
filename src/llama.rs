@@ -119,7 +119,7 @@ impl BuildPrompt for Llama2ChatPrompt {
         //     } else {
         //         return Err(crate::error::PromptError::UnknownRole(messages[left].role));
         //     }
-        }
+        // }
 
         println!("*** [prompt begin] ***");
         println!("{}", &prompt);
