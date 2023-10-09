@@ -75,18 +75,48 @@ impl BuildPrompt for Llama2ChatPrompt {
         }
 
         let mut prompt = String::new();
-        for message in messages {
-            if message.role == ChatCompletionRole::User {
-                prompt = Llama2ChatPrompt::append_user_message(
-                    &prompt,
-                    &system_prompt,
-                    message.content.as_str(),
-                );
-            } else if message.role == ChatCompletionRole::Assistant {
-                prompt =
-                    Llama2ChatPrompt::append_assistant_message(&prompt, message.content.as_str());
+        let len = messages.len();
+        let mut left = 0;
+        // for message in messages {
+        //     if message.role == ChatCompletionRole::User {
+        //         prompt = Llama2ChatPrompt::append_user_message(
+        //             &prompt,
+        //             &system_prompt,
+        //             message.content.as_str(),
+        //         );
+        //     } else if message.role == ChatCompletionRole::Assistant {
+        //         prompt =
+        //             Llama2ChatPrompt::append_assistant_message(&prompt, message.content.as_str());
+        //     } else {
+        //         return Err(crate::error::PromptError::UnknownRole(message.role));
+        //     }
+        // }
+
+        while left < len {
+            if messages[left].role == ChatCompletionRole::User {
+                let mut content: String = messages[left].content.clone();
+
+                let mut right = left + 1;
+                while right < len && messages[right].role == ChatCompletionRole::User {
+                    content = format!("{} {}", content, messages[right].content.as_str().trim());
+                    right += 1;
+                }
+                left = right;
+
+                prompt = Llama2ChatPrompt::append_user_message(&prompt, &system_prompt, &content);
+            } else if messages[left].role == ChatCompletionRole::Assistant {
+                let mut content: String = messages[left].content.clone();
+
+                let mut right = left + 1;
+                while right < len && messages[right].role == ChatCompletionRole::Assistant {
+                    content = format!("{} {}", content, messages[right].content.as_str().trim());
+                    right += 1;
+                }
+                left = right;
+
+                prompt = Llama2ChatPrompt::append_assistant_message(&prompt, &content);
             } else {
-                return Err(crate::error::PromptError::UnknownRole(message.role));
+                return Err(crate::error::PromptError::UnknownRole(messages[left].role));
             }
         }
 
