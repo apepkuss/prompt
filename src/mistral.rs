@@ -1,6 +1,7 @@
 use crate::{error::Result, BuildPrompt};
 use xin::chat::{ChatCompletionRequestMessage, ChatCompletionRole};
 
+/// Generate prompts for the `Mistral-instruct-v0.1` model.
 #[derive(Debug, Default)]
 pub struct MistralInstructPrompt {}
 impl MistralInstructPrompt {
