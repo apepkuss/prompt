@@ -1,5 +1,6 @@
 pub mod error;
 pub mod llama;
+pub mod mistral;
 
 use error::Result;
 use xin::chat::ChatCompletionRequestMessage;
